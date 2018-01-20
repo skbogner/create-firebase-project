@@ -1,8 +1,8 @@
 const write = require('write')
 
 const indexFile = require('./files/index.js')
-const onCreateFile = require('./files/onCreate.js')
-const userFile = require('./files/user.js')
+const firestoreUsers = require('./files/firestore-users.js')
+const modulesUser = require('./files/modules-user.js')
 const babelFile = require('./files/babelrc.js')
 const eslintFile = require('./files/eslintrc.js')
 const eslintIgnoreFile = require('./files/eslintignore.js')
@@ -34,8 +34,8 @@ module.exports = function basicSetup () {
   }
 
   write.sync('./functions/index.js', indexFile)
-  write.sync('./functions/src/firestore/users/onCreate.f.js', onCreateFile)
-  write.sync('./functions/src/modules/user.js', userFile)
+  write.sync('./functions/src/firestore/users.f.js', firestoreUsers)
+  write.sync('./functions/src/modules/user.js', modulesUser)
   write.sync('./functions/.babelrc', babelFile)
   write.sync('./functions/.eslintrc.js', eslintFile)
   write.sync('./functions/.eslintignore', eslintIgnoreFile)
