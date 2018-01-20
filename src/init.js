@@ -1,66 +1,64 @@
-const write = require('write')
 const jsonfile = require('jsonfile')
+const _ = require('lodash')
 
-const indexFile = require('./files/index.js')
-const onCreateFile = require('./files/onCreate.js')
-const babelFile = require('./files/babel.js')
-const eslintFile = require('./files/eslint.js')
-const eslintIgnoreFile = require('./files/eslintignore.js')
+// Steps
+const stepBasicSetup = require('./steps/basic')
+const stepJest = require('./steps/jest')
+
+// Helpers
+const mergeScripts = (prev, next) => {
+  _.forEach(_.keys(next), script => {
+    if (_.includes(_.keys(prev), script)) {
+      if (!_.isObject(next[script])) {
+        console.log(script, '\t! possibly conflicting script')
+        return
+      }
+
+      if (next[script].type === 'APPEND') {
+        console.log(script, '\t\u2713 appending to script')
+        next[script] = prev[script] + next[script].script
+      }
+    }
+  })
+
+  return next
+}
+
+const runSteps = (packageJson, logStatements, steps) => {
+  steps.forEach(step => {
+    [packageJson, logStatements] = runStep(packageJson, logStatements, step)
+  })
+  return [packageJson, logStatements]
+}
+
+const runStep = (prevPackageJson, logStatements, step) => {
+  const [packageJson, log] = step()
+  const merged = mergeScripts(
+    prevPackageJson.scripts,
+    packageJson.scripts
+  )
+
+  return [
+    _.merge(prevPackageJson, _.omit(packageJson, 'scripts'), { scripts: merged }),
+    [...logStatements, log]
+  ]
+}
 
 module.exports = opts => {
-  const package = jsonfile.readFileSync('./functions/package.json')
+  let [packageJson, logs] = runSteps(
+    jsonfile.readFileSync('./functions/package.json'),
+    [],
+    [
+      stepBasicSetup,
+      stepJest
+    ]
+  )
 
-  // 1. Files
-  // redo functions/index.js
-  write.sync('./functions/index.js', indexFile)
-  
-  // add requirements to package.json
-  package.dependencies['camelcase'] = '^4.1.0'
-  package.dependencies['glob'] = '^7.1.2'
-  package.dependencies['lodash'] = '^4.17.4'
-  
-  // create example function
-  write.sync('./functions/src/firestore/users/onCreate.f.js', onCreateFile)
-  
-  // create README.md
-  
-  
-  // 2. Babel & ESLint
-  // add .babelrc
-  write.sync('./functions/.babelrc', babelFile)
-  // add .eslintrc and .eslintignore
-  write.sync('./functions/.eslintrc.js', eslintFile)
-  write.sync('./functions/.eslintignore', eslintIgnoreFile)
-  
-  // add to package.json
-  package.devDependencies = {
-    "@babel/cli": "^7.0.0-beta.37",
-    "@babel/core": "^7.0.0-beta.37",
-    "@babel/preset-env": "^7.0.0-beta.37",
-    "eslint": "^4.15.0",
-    "eslint-config-standard": "^11.0.0-beta.0",
-    "eslint-plugin-import": "^2.8.0",
-    "eslint-plugin-node": "^5.2.1",
-    "eslint-plugin-promise": "^3.6.0",
-    "eslint-plugin-standard": "^3.0.1"
-  }
-  
-  // 4. Add scripts
-  // cleanup, build, deploy
-  package.scripts = {
-    'clean': 'rimraf ./build',
-    'build': 'babel src --out-dir build --copy-files',
-    'deploy': 'yarn clean && yarn build && firebase deploy'
-  }
-  // and their dependencies
-  package.devDependencies['rimraf'] = '^2.6.2'
-  
-  // 4. Install dependencies
-  jsonfile.writeFileSync('./functions/package.json', package, {
+  // Write package.json
+  jsonfile.writeFileSync('./functions/package.json', packageJson, {
     spaces: 2
   })
-  console.log(`To instal dependencies run the following command:
-  -> cd functions && yarn
-`
-  )
+
+  // Write log
+  _.forEach(logs, l => console.log(l))
 }
