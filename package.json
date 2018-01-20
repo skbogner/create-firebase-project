@@ -1,6 +1,6 @@
 {
   "name": "scaffold-firebase",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Scaffolding for Firebase projects",
   "main": "index.js",
   "scripts": {
