@@ -5,7 +5,7 @@ const _ = require('lodash')
 const glob = require('glob')
 const camelCase = require('camelcase')
 
-// import everything from everywhere in src
+// import all cloud functions from build
 const files = glob.sync('./build/**/*.f.js', { cwd: __dirname, ignore: './node_modules/**' })
 
 files.forEach(file => {

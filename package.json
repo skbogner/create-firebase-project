@@ -1,13 +1,13 @@
 {
-  "name": "scaffold-firebase",
-  "version": "0.0.3",
-  "description": "Scaffolding for Firebase projects",
+  "name": "firefold",
+  "version": "0.0.4",
+  "description": "Scaffolding for Firebase",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "scaffold-firebase": "./index.js"
+    "firefold": "./index.js"
   },
   "author": "@skbogner",
   "license": "ISC",

@@ -11,7 +11,7 @@ module.exports = function basicSetup () {
   const packageJson = {
     scripts: {
       'clean': 'rimraf ./build',
-      'build': 'babel src --out-dir build --copy-files',
+      'build': 'babel src --out-dir build',
       'deploy': 'yarn clean && yarn build && firebase deploy'
     },
     dependencies: {
