@@ -1,15 +1,14 @@
-# Scaffold Firebase
+# firefold
+Scaffolding for Firebase.
 
-Scaffolding for Firebase projects.
+It's meant to provide a more sane starting point for your 
+firebase projects than the `firebase` cli.
 
-This sets your project up with:
-- `babel`
-- `eslint`
-- `jest`
-- A sample cloud function.
-- A sample `jest` test suite.
-
-It's meant to provide a more sane starting point for your firebase projects than the `firebase` cli.
+## Installation
+```
+yarn global add firefold // OR
+npm install -g firefold
+```
 
 ## Usage
 
@@ -18,7 +17,7 @@ It's meant to provide a more sane starting point for your firebase projects than
 > firebase init
   // follow instructions
   // and be sure to select JavaScript as language
-> scaffold-firebase
+> firefold
 ```
 
 
